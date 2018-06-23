@@ -3,6 +3,7 @@ using CSharpTraceRoute.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Net.NetworkInformation;
 
 namespace CSharpTraceRoute
@@ -45,9 +46,17 @@ namespace CSharpTraceRoute
 
             string hostName = (string)e.Argument;
             TraceRoute traceRouter = new TraceRoute(3000, 30);
-            foreach (var reply in traceRouter.Send(hostName))
+
+            try
             {
-                thisWorker.ReportProgress(0, reply);
+                foreach (var reply in traceRouter.Send(hostName))
+                {
+                    thisWorker.ReportProgress(0, reply);
+                }
+            }
+            catch (PingException pingEx)
+            {
+                Debug.WriteLine(pingEx);
             }
         }
 
